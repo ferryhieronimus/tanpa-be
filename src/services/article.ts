@@ -4,19 +4,27 @@ const createArticle = async (
   title: string,
   content: string,
   tags: string[],
-  _creatorId: number
+  creatorId: string
 ) => {
   const createdArticle = await articleRepository.createArticle(
     title,
     content,
     tags,
-    1
+    creatorId
   );
   return createdArticle;
 };
 
+const getArticlesByCreatorId = async (creatorId: string) => {
+  console.log(creatorId);
+  
+  const articles = await articleRepository.getArticlesByCreatorId(creatorId);
+  return articles;
+};
+
 const services = {
   createArticle,
+  getArticlesByCreatorId,
 };
 
 export default services;

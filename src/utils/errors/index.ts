@@ -1,22 +1,46 @@
-class InvalidCredentials extends Error {
+class InvalidCredentialsError extends Error {
+  statusCode: number;
+
   constructor() {
     super("Invalid credentials");
-    this.name = "InvalidCredentials";
+    this.name = "InvalidCredentialsError";
+    this.statusCode = 401;
   }
 }
 
-class UserAlreadyExist extends Error {
+class UserAlreadyExistError extends Error {
+  statusCode: number;
+
   constructor() {
     super("User with same username already exist");
-    this.name = "UserAlreadyExist";
+    this.name = "UserAlreadyExistError";
+    this.statusCode = 400;
   }
 }
 
-class Unauthorized extends Error {
+class UnauthorizedError extends Error {
+  statusCode: number;
+
   constructor() {
     super("Unauthorized");
-    this.name = "Unauthorized";
+    this.name = "UnauthorizedError";
+    this.statusCode = 403;
   }
 }
 
-export { InvalidCredentials, UserAlreadyExist, Unauthorized };
+class ResourceNotFoundError extends Error {
+  statusCode: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "ResourceNotFoundError";
+    this.statusCode = 404;
+  }
+}
+
+export {
+  InvalidCredentialsError,
+  UserAlreadyExistError,
+  UnauthorizedError,
+  ResourceNotFoundError,
+};

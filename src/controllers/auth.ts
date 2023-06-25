@@ -6,7 +6,7 @@ const signIn: RequestHandler = async (req, res) => {
 
   const user = await authService.signIn(username, password);
 
-  req.session.username = user.username;
+  req.session.userId = user.id;
 
   res.status(200).send({
     status: "success",

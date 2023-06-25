@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   username  String
   email     String
   password  String
@@ -24,18 +24,18 @@ model User {
 }
 
 model Article {
-  id        Int              @id @default(autoincrement())
+  id        String           @id @default(uuid())
   title     String
   content   String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
   creator   User             @relation(fields: [creatorId], references: [id])
-  creatorId Int
+  creatorId String
   tags      TagsOnArticles[]
 }
 
 model Tag {
-  id       Int              @id @default(autoincrement())
+  id       String           @id @default(uuid())
   name     String           @unique
   articles TagsOnArticles[]
 }
@@ -43,10 +43,10 @@ model Tag {
 model TagsOnArticles {
   article      Article  @relation(fields: [articleId], references: [id])
   tag          Tag      @relation(fields: [tagId], references: [id])
-  articleId    Int
-  tagId        Int
+  articleId    String
+  tagId        String
   assignedAt   DateTime @default(now())
-  assignedById Int
+  assignedById String
 
   @@id([articleId, tagId])
 }

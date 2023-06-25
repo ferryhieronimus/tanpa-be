@@ -1,33 +1,14 @@
 import { ErrorRequestHandler } from "express";
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  let statusCode;
-  let errorMessage;
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
 
-  console.log(err.message)
-  switch (err.name) {
-    case "NotFoundError":
-      statusCode = 404;
-      errorMessage = err.message;
-      break;
-    case "InvalidCredentials":
-      statusCode = 401;
-      errorMessage = err.message;
-      break;
-    case "UserAlreadyExist":
-      statusCode = 400;
-      errorMessage = err.message;
-      break;
-    case "Unauthorized":
-        statusCode = 403;
-        errorMessage = err.message;
-        break;
-    default:
-      statusCode = 500;
-      errorMessage = "Internal server error";
-      break;
-  }
+  console.error(err.message);
 
-  res.status(statusCode).json({ status: "error", message: errorMessage });
+  res.status(statusCode).json({
+    status: "error",
+    message: message,
+  });
 };
 
 export default errorHandler;

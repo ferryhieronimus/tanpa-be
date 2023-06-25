@@ -5,5 +5,6 @@ import middlewares from "../middlewares";
 const router: Router = express.Router();
 
 router.post('/', middlewares.validateRequest, articleController.createArticle)
+router.post('/:creatorId', middlewares.validateRequest, articleController.getArticlesByCreatorId)
 
 export default router;
