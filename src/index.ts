@@ -2,7 +2,7 @@ import "express-async-errors";
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import session from "express-session"
+import session from "express-session";
 import router from "./routes";
 import middlewares from "./middlewares";
 import redisStore from "./configs/redis";
@@ -23,10 +23,10 @@ app.use(
     cookie: {
       secure: false, // Set to true if using HTTPS
       httpOnly: true,
-      maxAge: 1000 * 60
+      maxAge: 1000 * 60 * 30, // 30 minutes
     },
   })
-)
+);
 app.use("/api", router);
 
 app.use(middlewares.errorHandler);

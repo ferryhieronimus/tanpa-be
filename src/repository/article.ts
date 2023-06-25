@@ -51,11 +51,39 @@ const getArticlesByCreatorId = async (creatorId: string) => {
     where: { id: creatorId },
   });
 
-  const articles = await prisma.article.findMany({
+  const tmpArticles = await prisma.article.findMany({
     where: {
       creatorId,
     },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: {
+        select: {
+          username: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
+
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const articles = tmpArticles.map((article) => ({
+    ...article,
+    tags: article.tags.map((tag) => tag.tag.name),
+  }));
 
   return articles;
 };

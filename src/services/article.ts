@@ -16,8 +16,6 @@ const createArticle = async (
 };
 
 const getArticlesByCreatorId = async (creatorId: string) => {
-  console.log(creatorId);
-  
   const articles = await articleRepository.getArticlesByCreatorId(creatorId);
   return articles;
 };

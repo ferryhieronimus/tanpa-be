@@ -22,7 +22,7 @@ const createArticle: RequestHandler = async (req, res) => {
 
 const getArticlesByCreatorId: RequestHandler = async (req, res) => {
   const { creatorId } = req.params;
-  
+
   const article = await articleService.getArticlesByCreatorId(creatorId);
 
   res.status(200).send({
