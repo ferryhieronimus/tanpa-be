@@ -1,7 +1,13 @@
 import { createClient } from "redis";
+import RedisStore from "connect-redis";
 
-const redis = createClient();
+let redis = createClient();
+redis.connect().catch(console.error);
 
 redis.on("error", (err) => console.log("Redis Client Error", err));
 
-export default redis;
+let redisStore = new RedisStore({
+  client: redis
+});
+
+export default redisStore;

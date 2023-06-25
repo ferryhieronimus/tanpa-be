@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import generateSessionToken from "../utils/generateSessionToken";
 import { InvalidCredentials, UserAlreadyExist } from "../utils/errors";
 import { authRepository } from "../repository";
 
@@ -11,11 +10,7 @@ const signIn = async (username: string, password: string) => {
     throw new InvalidCredentials();
   }
 
-  const sessionToken = generateSessionToken();
-
-  await authRepository.storeSession(sessionToken, username);
-
-  return sessionToken;
+  return user;
 };
 
 const signUp = async (
@@ -33,13 +28,15 @@ const signUp = async (
 
   const passwordHash = await bcrypt.hash(password, 10)
 
-  await authRepository.createUser(
+  const user = await authRepository.createUser(
     username,
     passwordHash,
     email,
     firstName,
     lastName
   );
+
+  return user
 };
 
 const services = {

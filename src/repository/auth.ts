@@ -1,5 +1,4 @@
 import prisma from "../configs/prisma";
-import redis from "../configs/redis";
 
 const createUser = async (
   username: string,
@@ -10,6 +9,7 @@ const createUser = async (
 ) => {
   const user = await prisma.user.create({
     data: { username, password, email, firstName, lastName },
+    select: { username: true, email: true, firstName: true, lastName: true },
   });
 
   return user;
@@ -35,15 +35,10 @@ const findUserOrThrow = async (username: string) => {
   return user;
 };
 
-const storeSession = async (key: string, value: string) => {
-  await redis.set(key, value);
-};
-
 const repository = {
   createUser,
   findUser,
   findUserOrThrow,
-  storeSession,
 };
 
 export default repository;

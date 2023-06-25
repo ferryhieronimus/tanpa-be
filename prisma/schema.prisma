@@ -8,16 +8,45 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  username String
-  email    String 
-  password String
+  id        Int       @id @default(autoincrement())
+  username  String
+  email     String
+  password  String
   firstName String
   lastName  String?
-  isDeleted Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isDeleted Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  Articles  Article[]
 
   @@unique([username, isDeleted])
-} 
+}
+
+model Article {
+  id        Int              @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  creator   User             @relation(fields: [creatorId], references: [id])
+  creatorId Int
+  tags      TagsOnArticles[]
+}
+
+model Tag {
+  id       Int              @id @default(autoincrement())
+  name     String           @unique
+  articles TagsOnArticles[]
+}
+
+model TagsOnArticles {
+  article      Article  @relation(fields: [articleId], references: [id])
+  tag          Tag      @relation(fields: [tagId], references: [id])
+  articleId    Int
+  tagId        Int
+  assignedAt   DateTime @default(now())
+  assignedById Int
+
+  @@id([articleId, tagId])
+}

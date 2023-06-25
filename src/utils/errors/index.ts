@@ -6,13 +6,17 @@ class InvalidCredentials extends Error {
 }
 
 class UserAlreadyExist extends Error {
-    constructor() {
-      super("User with same username already exist");
-      this.name = "UserAlreadyExist";
-    }
+  constructor() {
+    super("User with same username already exist");
+    this.name = "UserAlreadyExist";
   }
-
-export {
-    InvalidCredentials,
-    UserAlreadyExist
 }
+
+class Unauthorized extends Error {
+  constructor() {
+    super("Unauthorized");
+    this.name = "Unauthorized";
+  }
+}
+
+export { InvalidCredentials, UserAlreadyExist, Unauthorized };

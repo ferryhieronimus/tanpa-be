@@ -1,3 +1,4 @@
 import authRepository from "./auth";
+import articleRepository from "./article";
 
-export { authRepository };
+export { authRepository, articleRepository };

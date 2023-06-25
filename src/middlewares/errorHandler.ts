@@ -17,6 +17,10 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
       statusCode = 400;
       errorMessage = err.message;
       break;
+    case "Unauthorized":
+        statusCode = 403;
+        errorMessage = err.message;
+        break;
     default:
       statusCode = 500;
       errorMessage = "Internal server error";
