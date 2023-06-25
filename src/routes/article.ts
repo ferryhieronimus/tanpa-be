@@ -13,11 +13,13 @@ router.post(
 router.put(
   "/:articleId",
   middlewares.validateRequest,
+  middlewares.validateOwnership,
   articleController.updateArticleById
 );
 router.delete(
   "/:articleId",
   middlewares.validateRequest,
+  middlewares.validateOwnership,
   articleController.deleteArticleById
 );
 

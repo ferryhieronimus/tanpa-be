@@ -12,22 +12,14 @@ const getArticlesByCreatorId = async (creatorId: string) => {
 
 const updateArticleById = async (
   articleId: string,
-  creatorId: string,
   data: updateArticleParams
 ) => {
-  const articles = await articleRepository.updateArticleById(
-    articleId,
-    creatorId,
-    data
-  );
+  const articles = await articleRepository.updateArticleById(articleId, data);
   return articles;
 };
 
-const deleteArticleById = async (articleId: string, creatorId: string) => {
-  const articles = await articleRepository.deleteArticleById(
-    articleId,
-    creatorId
-  );
+const deleteArticleById = async (articleId: string) => {
+  const articles = await articleRepository.deleteArticleById(articleId);
   return articles;
 };
 

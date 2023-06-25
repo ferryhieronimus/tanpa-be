@@ -1,7 +1,26 @@
-// import { RequestHandler } from 'express';
-// import { PrismaClient } from '@prisma/client';
+import { RequestHandler } from "express";
+import { UnauthorizedError } from "../utils/errors";
+import prisma from "../configs/prisma";
 
-// const prisma = new PrismaClient();
+// could possibly make it more general
+const validateOwnership: RequestHandler = async (req, _res, next) => {
+  const { articleId } = req.params;
+  const creatorId = req.session.userId;
 
-// // Custom middleware to check ownership of a resource
-// const checkOwnership:
+  const resource = await prisma.article.findUniqueOrThrow({
+    where: {
+      id: articleId,
+    },
+    select: {
+      creatorId: true,
+    },
+  });
+
+  if (resource.creatorId !== creatorId) {
+    throw new UnauthorizedError();
+  }
+
+  next()
+};
+
+export default validateOwnership;

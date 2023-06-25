@@ -35,7 +35,6 @@ const updateArticleById: RequestHandler = async (req, res) => {
 
   const updatedArticle = await articleService.updateArticleById(
     articleId,
-    req.session.userId!,
     data
   );
 
@@ -51,7 +50,7 @@ const updateArticleById: RequestHandler = async (req, res) => {
 const deleteArticleById: RequestHandler = async (req, res) => {
   const { articleId } = req.params;
 
-  await articleService.deleteArticleById(articleId, req.session.userId!);
+  await articleService.deleteArticleById(articleId);
 
   res.status(200).send({
     status: "success",

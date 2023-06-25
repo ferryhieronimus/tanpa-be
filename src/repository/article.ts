@@ -1,5 +1,4 @@
 import prisma from "../configs/prisma";
-import { UnauthorizedError } from "../utils/errors";
 
 const createArticle = async (data: createArticleParams, creatorId: string) => {
   const { title, content, tags } = data;
@@ -91,24 +90,9 @@ const getArticlesByCreatorId = async (creatorId: string) => {
 
 const updateArticleById = async (
   articleId: string,
-  creatorId: string,
   data: updateArticleParams
 ) => {
   const { title, content, tags } = data;
-
-  // prohibit user updates other's article
-  const article = await prisma.article.findUniqueOrThrow({
-    where: {
-      id: articleId,
-    },
-    select: {
-      creatorId: true,
-    },
-  });
-
-  if (article.creatorId !== creatorId) {
-    throw new UnauthorizedError();
-  }
 
   // delete many-to-many relation first, then add new
   const tagId = await prisma.tagsOnArticles.findMany({
@@ -180,21 +164,7 @@ const updateArticleById = async (
   return { ...updatedArticle, tags: arrayOfTags };
 };
 
-const deleteArticleById = async (articleId: string, creatorId: string) => {
-  // prohibit user deletes other's article
-  const article = await prisma.article.findUniqueOrThrow({
-    where: {
-      id: articleId,
-    },
-    select: {
-      creatorId: true,
-    },
-  });
-
-  if (article.creatorId !== creatorId) {
-    throw new UnauthorizedError();
-  }
-
+const deleteArticleById = async (articleId: string) => {
   const deletedArticle = await prisma.article.delete({
     where: {
       id: articleId,
