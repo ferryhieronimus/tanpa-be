@@ -16,15 +16,9 @@ const signIn: RequestHandler = async (req, res) => {
 };
 
 const signUp: RequestHandler = async (req, res) => {
-  const { username, password, email, firstName, lastName } = req.body;
+  const data: createUserParams = req.body;
 
-  const createdUser = await authService.signUp(
-    username,
-    password,
-    email,
-    firstName,
-    lastName
-  );
+  const createdUser = await authService.signUp(data);
 
   res.status(200).send({
     status: "success",

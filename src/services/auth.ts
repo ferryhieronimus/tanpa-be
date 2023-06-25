@@ -16,13 +16,9 @@ const signIn = async (username: string, password: string) => {
   return user;
 };
 
-const signUp = async (
-  username: string,
-  password: string,
-  email: string,
-  firstName: string,
-  lastName: string
-) => {
+const signUp = async (data: createUserParams) => {
+  const { username, password, email, firstName, lastName } = data;
+
   const isUserAlreadyExist = await authRepository.findUser(username);
 
   if (isUserAlreadyExist) {
