@@ -46,15 +46,15 @@ const createArticle = async (data: createArticleParams, creatorId: string) => {
   return { ...createdArticle, tags: arrayOfTags };
 };
 
-const getArticlesByCreatorId = async (creatorId: string) => {
-  await prisma.user.findUniqueOrThrow({
-    where: { id: creatorId },
-  });
+const getArticles = async (creatorId: string) => {
+  if (creatorId) {
+    await prisma.user.findUniqueOrThrow({
+      where: { id: creatorId },
+    });
+  }
 
   const tmpArticles = await prisma.article.findMany({
-    where: {
-      creatorId,
-    },
+    where: creatorId ? { creatorId } : {},
     select: {
       id: true,
       title: true,
@@ -176,7 +176,7 @@ const deleteArticleById = async (articleId: string) => {
 
 const repository = {
   createArticle,
-  getArticlesByCreatorId,
+  getArticles,
   updateArticleById,
   deleteArticleById,
 };

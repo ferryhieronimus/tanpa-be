@@ -5,8 +5,8 @@ const createArticle = async (data: createArticleParams, creatorId: string) => {
   return createdArticle;
 };
 
-const getArticlesByCreatorId = async (creatorId: string) => {
-  const articles = await articleRepository.getArticlesByCreatorId(creatorId);
+const getArticles = async (creatorId: string) => {
+  const articles = await articleRepository.getArticles(creatorId);
   return articles;
 };
 
@@ -25,7 +25,7 @@ const deleteArticleById = async (articleId: string) => {
 
 const services = {
   createArticle,
-  getArticlesByCreatorId,
+  getArticles,
   updateArticleById,
   deleteArticleById,
 };

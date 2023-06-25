@@ -15,10 +15,10 @@ const createArticle: RequestHandler = async (req, res) => {
   });
 };
 
-const getArticlesByCreatorId: RequestHandler = async (req, res) => {
+const getArticles: RequestHandler = async (req, res) => {
   const { creatorId } = req.params;
 
-  const article = await articleService.getArticlesByCreatorId(creatorId);
+  const article = await articleService.getArticles(creatorId);
 
   res.status(200).send({
     status: "success",
@@ -60,7 +60,7 @@ const deleteArticleById: RequestHandler = async (req, res) => {
 
 const controllers = {
   createArticle,
-  getArticlesByCreatorId,
+  getArticles,
   deleteArticleById,
   updateArticleById,
 };
