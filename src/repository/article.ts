@@ -1,12 +1,9 @@
 import prisma from "../configs/prisma";
-import { ResourceNotFoundError, UnauthorizedError } from "../utils/errors";
+import { UnauthorizedError } from "../utils/errors";
 
-const createArticle = async (
-  title: string,
-  content: string,
-  tags: string[],
-  creatorId: string
-) => {
+const createArticle = async (data: createArticleParams, creatorId: string) => {
+  const { title, content, tags } = data;
+
   const createdArticle = await prisma.article.create({
     data: {
       title,
@@ -16,7 +13,6 @@ const createArticle = async (
       },
       tags: {
         create: tags.map((tagName) => ({
-          assignedById: creatorId,
           tag: {
             connectOrCreate: {
               where: { name: tagName },
@@ -93,11 +89,105 @@ const getArticlesByCreatorId = async (creatorId: string) => {
   return articles;
 };
 
+const updateArticleById = async (
+  articleId: string,
+  creatorId: string,
+  data: updateArticleParams
+) => {
+  const { title, content, tags } = data;
+
+  // prohibit user updates other's article
+  const article = await prisma.article.findUniqueOrThrow({
+    where: {
+      id: articleId,
+    },
+    select: {
+      creatorId: true,
+    },
+  });
+
+  if (article.creatorId !== creatorId) {
+    throw new UnauthorizedError();
+  }
+
+  // delete many-to-many relation first, then add new
+  const tagId = await prisma.tagsOnArticles.findMany({
+    where: {
+      tagId: { in: tags },
+      articleId,
+    },
+    select: {
+      tagId: true,
+    },
+  });
+
+  const tagIdsArray = tagId.map((result) => result.tagId);
+
+  await prisma.tagsOnArticles.deleteMany({
+    where: {
+      tagId: { notIn: tagIdsArray },
+      articleId,
+    },
+  });
+
+  const updatedArticle = await prisma.article.update({
+    where: {
+      id: articleId,
+    },
+    data: {
+      title,
+      content,
+      tags: {
+        create: tags.map((tagName) => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: tagName },
+              create: { name: tagName },
+            },
+          },
+        })),
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: {
+        select: {
+          username: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const arrayOfTags = updatedArticle.tags.map((tag) =>
+    tag.tag ? tag.tag.name : null
+  );
+
+  return { ...updatedArticle, tags: arrayOfTags };
+};
+
 const deleteArticleById = async (articleId: string, creatorId: string) => {
   // prohibit user deletes other's article
   const article = await prisma.article.findUniqueOrThrow({
     where: {
       id: articleId,
+    },
+    select: {
+      creatorId: true,
     },
   });
 
@@ -117,6 +207,7 @@ const deleteArticleById = async (articleId: string, creatorId: string) => {
 const repository = {
   createArticle,
   getArticlesByCreatorId,
+  updateArticleById,
   deleteArticleById,
 };
 

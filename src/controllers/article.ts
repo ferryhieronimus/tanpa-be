@@ -2,20 +2,15 @@ import { RequestHandler } from "express";
 import { articleService } from "../services";
 
 const createArticle: RequestHandler = async (req, res) => {
-  const { title, content, tags } = req.body;
+  const data: createArticleParams = req.body;
 
-  const article = await articleService.createArticle(
-    title,
-    content,
-    tags,
-    req.session.userId!
-  );
+  const article = await articleService.createArticle(data, req.session.userId!);
 
   res.status(201).send({
     status: "success",
     message: "Article created successfully",
     data: {
-      article: article,
+      article,
     },
   });
 };
@@ -27,9 +22,28 @@ const getArticlesByCreatorId: RequestHandler = async (req, res) => {
 
   res.status(200).send({
     status: "success",
-    message: "Article retrieved",
+    message: "Article retrieved successfully",
     data: {
       articles: article,
+    },
+  });
+};
+
+const updateArticleById: RequestHandler = async (req, res) => {
+  const { articleId } = req.params;
+  const data: updateArticleParams = req.body;
+
+  const updatedArticle = await articleService.updateArticleById(
+    articleId,
+    req.session.userId!,
+    data
+  );
+
+  res.status(200).send({
+    status: "success",
+    message: "Article updated successfully",
+    data: {
+      article: updatedArticle,
     },
   });
 };
@@ -49,6 +63,7 @@ const controllers = {
   createArticle,
   getArticlesByCreatorId,
   deleteArticleById,
+  updateArticleById,
 };
 
 export default controllers;

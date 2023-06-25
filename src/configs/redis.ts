@@ -9,7 +9,7 @@ redis.connect().catch(console.error);
 redis.on("error", (err) => console.log("Redis Client Error", err));
 
 let redisStore = new RedisStore({
-  client: redis
+  client: redis,
 });
 
 export default redisStore;

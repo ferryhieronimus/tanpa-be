@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
-import { InvalidCredentialsError, UserAlreadyExistError } from "../utils/errors";
+import {
+  InvalidCredentialsError,
+  UserAlreadyExistError,
+} from "../utils/errors";
 import { authRepository } from "../repository";
 
 const signIn = async (username: string, password: string) => {
@@ -26,7 +29,7 @@ const signUp = async (
     throw new UserAlreadyExistError();
   }
 
-  const passwordHash = await bcrypt.hash(password, 10)
+  const passwordHash = await bcrypt.hash(password, 10);
 
   const user = await authRepository.createUser(
     username,
@@ -36,7 +39,7 @@ const signUp = async (
     lastName
   );
 
-  return user
+  return user;
 };
 
 const services = {

@@ -5,7 +5,7 @@ import validateRequest from "./validateRequest";
 const middlewares = {
   unknownEndpoints,
   errorHandler,
-  validateRequest
+  validateRequest,
 };
 
 export default middlewares;
