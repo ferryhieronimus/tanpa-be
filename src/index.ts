@@ -1,15 +1,29 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import 'express-async-errors';
+import express, { Express } from "express";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import router from './routes';
+import middlewares from './middlewares';
+import redis from './configs/redis';
+
+const app: Express = express();
 
 dotenv.config();
 
-const app: Express = express();
+app.use(express.json());
+app.use(morgan("tiny"));
+app.use('/api', router)
+
+app.use(middlewares.errorHandler)
+app.use(middlewares.unknownEndpoints)
+
 const port = process.env.PORT;
 
-app.get('/', (_req: Request, res: Response) => {
-  res.send('Express App with TypeScript');
-});
+const start = async () => {
+  await redis.connect();
+  app.listen(port, () => {
+    console.log(`[server]: Server is running at http://localhost:${port}`);
+  });
+};
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
-});
+start()
