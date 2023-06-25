@@ -29,14 +29,26 @@ const getArticlesByCreatorId: RequestHandler = async (req, res) => {
     status: "success",
     message: "Article retrieved",
     data: {
-      article: article,
+      articles: article,
     },
+  });
+};
+
+const deleteArticleById: RequestHandler = async (req, res) => {
+  const { articleId } = req.params;
+
+  await articleService.deleteArticleById(articleId, req.session.userId!);
+
+  res.status(200).send({
+    status: "success",
+    message: "Article deleted successfully",
   });
 };
 
 const controllers = {
   createArticle,
   getArticlesByCreatorId,
+  deleteArticleById,
 };
 
 export default controllers;

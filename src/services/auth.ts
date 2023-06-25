@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { InvalidCredentials, UserAlreadyExist } from "../utils/errors";
+import { InvalidCredentialsError, UserAlreadyExistError } from "../utils/errors";
 import { authRepository } from "../repository";
 
 const signIn = async (username: string, password: string) => {
@@ -7,7 +7,7 @@ const signIn = async (username: string, password: string) => {
 
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
-    throw new InvalidCredentials();
+    throw new InvalidCredentialsError();
   }
 
   return user;
@@ -23,7 +23,7 @@ const signUp = async (
   const isUserAlreadyExist = await authRepository.findUser(username);
 
   if (isUserAlreadyExist) {
-    throw new UserAlreadyExist();
+    throw new UserAlreadyExistError();
   }
 
   const passwordHash = await bcrypt.hash(password, 10)

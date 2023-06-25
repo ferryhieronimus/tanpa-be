@@ -29,7 +29,7 @@ model Article {
   content   String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
-  creator   User             @relation(fields: [creatorId], references: [id])
+  creator   User             @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   creatorId String
   tags      TagsOnArticles[]
 }
@@ -41,8 +41,8 @@ model Tag {
 }
 
 model TagsOnArticles {
-  article      Article  @relation(fields: [articleId], references: [id])
-  tag          Tag      @relation(fields: [tagId], references: [id])
+  article      Article?  @relation(fields: [articleId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  tag          Tag?      @relation(fields: [tagId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   articleId    String
   tagId        String
   assignedAt   DateTime @default(now())

@@ -6,5 +6,6 @@ const router: Router = express.Router();
 
 router.post('/', middlewares.validateRequest, articleController.createArticle)
 router.post('/:creatorId', middlewares.validateRequest, articleController.getArticlesByCreatorId)
+router.delete('/:articleId', middlewares.validateRequest, articleController.deleteArticleById)
 
 export default router;

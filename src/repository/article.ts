@@ -1,4 +1,5 @@
 import prisma from "../configs/prisma";
+import { ResourceNotFoundError, UnauthorizedError } from "../utils/errors";
 
 const createArticle = async (
   title: string,
@@ -41,7 +42,11 @@ const createArticle = async (
     },
   });
 
-  const arrayOfTags = createdArticle.tags.map((tag) => tag.tag.name);
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const arrayOfTags = createdArticle.tags.map((tag) =>
+    tag.tag ? tag.tag.name : null
+  );
 
   return { ...createdArticle, tags: arrayOfTags };
 };
@@ -82,15 +87,37 @@ const getArticlesByCreatorId = async (creatorId: string) => {
   // might affect performance
   const articles = tmpArticles.map((article) => ({
     ...article,
-    tags: article.tags.map((tag) => tag.tag.name),
+    tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
   }));
 
   return articles;
 };
 
+const deleteArticleById = async (articleId: string, creatorId: string) => {
+  // prohibit user deletes other's article
+  const article = await prisma.article.findUniqueOrThrow({
+    where: {
+      id: articleId,
+    },
+  });
+
+  if (article.creatorId !== creatorId) {
+    throw new UnauthorizedError();
+  }
+
+  const deletedArticle = await prisma.article.delete({
+    where: {
+      id: articleId,
+    },
+  });
+
+  return deletedArticle;
+};
+
 const repository = {
   createArticle,
   getArticlesByCreatorId,
+  deleteArticleById,
 };
 
 export default repository;
