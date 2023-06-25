@@ -4,7 +4,7 @@ import articleRouter from "./article";
 
 const router: Router = express.Router();
 
-router.use("/auth", authRouter);
+router.use("/users", authRouter);
 router.use("/articles", articleRouter);
 
 export default router;

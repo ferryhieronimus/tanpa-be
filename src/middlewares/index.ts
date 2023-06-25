@@ -1,10 +1,10 @@
-import unknownEndpoints from "./unknownEndpoint";
+import unknownEndpoint from "./unknownEndpoint";
 import errorHandler from "./errorHandler";
 import validateRequest from "./validateRequest";
 import validateOwnership from "./validateOwnership";
 
 const middlewares = {
-  unknownEndpoints,
+  unknownEndpoint,
   errorHandler,
   validateRequest,
   validateOwnership

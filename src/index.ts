@@ -6,11 +6,14 @@ import session from "express-session";
 import router from "./routes";
 import middlewares from "./middlewares";
 import redisStore from "./configs/redis";
+import swaggerUi from "swagger-ui-express";
+import * as swaggerDocument from "../swagger.json"
 
 const app: Express = express();
 
 dotenv.config();
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(morgan("tiny"));
 
@@ -27,10 +30,10 @@ app.use(
     },
   })
 );
-app.use("/api", router);
+app.use("/api/v1", router);
 
+app.use(middlewares.unknownEndpoint);
 app.use(middlewares.errorHandler);
-app.use(middlewares.unknownEndpoints);
 
 const port = process.env.PORT || 3000;
 

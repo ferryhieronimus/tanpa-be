@@ -1,10 +1,10 @@
-import { ErrorRequestHandler } from "express";
+import { RequestHandler } from "express";
 
-const unknownEndpoints: ErrorRequestHandler = (_err, _req, res, _next) => {
+const unknownEndpoint: RequestHandler = (_req, res, _next) => {
   res.status(404).send({
     status: "error",
     message: "Resource not found",
   });
 };
 
-export default unknownEndpoints;
+export default unknownEndpoint;
