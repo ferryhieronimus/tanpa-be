@@ -114,6 +114,7 @@ const updateArticleById = async (
     },
   });
 
+  // does not update the 'updatedAt' field of the article if only the tags were updated
   const updatedArticle = await prisma.article.update({
     where: {
       id: articleId,
@@ -154,6 +155,12 @@ const updateArticleById = async (
       },
     },
   });
+
+  // temporary fix
+  await prisma.$queryRaw`
+  UPDATE "Article"
+  SET "updatedAt" = CURRENT_TIMESTAMP
+  WHERE "id" = ${articleId}`;
 
   // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
   // might affect performance
