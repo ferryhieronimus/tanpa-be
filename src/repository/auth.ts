@@ -35,10 +35,22 @@ const findUserOrThrow = async (username: string) => {
   return user;
 };
 
+const findUserById = async (userId: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    select: { username: true, email: true, firstName: true, lastName: true },
+  });
+
+  return user;
+};
+
 const repository = {
   createUser,
   findUser,
   findUserOrThrow,
+  findUserById,
 };
 
 export default repository;

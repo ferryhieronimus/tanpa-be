@@ -1,12 +1,12 @@
 import { RequestHandler } from "express";
-import { UnauthorizedError } from "../utils/errors";
+import { ZodSchema } from "zod";
 
-const validateRequest: RequestHandler = (req, _res, next) => {
-  if (req.session && req.session.userId) {
-    return next();
-  } else {
-    throw new UnauthorizedError();
-  }
+const validateRequest = <T>(schema: ZodSchema<T>): RequestHandler => {
+  return (req, _res, next) => {
+    const data = req.body;
+    schema.parse(data);
+    next();
+  };
 };
 
 export default validateRequest;

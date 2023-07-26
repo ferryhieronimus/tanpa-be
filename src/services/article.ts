@@ -1,6 +1,6 @@
 import { articleRepository } from "../repository";
 
-const createArticle = async (data: createArticleParams, creatorId: string) => {
+const createArticle = async (data: CreateArticleParams, creatorId: string) => {
   const createdArticle = await articleRepository.createArticle(data, creatorId);
   return createdArticle;
 };
@@ -10,15 +10,20 @@ const getArticles = async (creatorId: string) => {
   return articles;
 };
 
+const getArticlesByTag = async (tag: string) => {
+  const articles = await articleRepository.getArticlesByTag(tag);
+  return articles;
+};
+
 const updateArticleById = async (
-  articleId: string,
-  data: updateArticleParams
+  articleId: number,
+  data: UpdateArticleParams
 ) => {
   const articles = await articleRepository.updateArticleById(articleId, data);
   return articles;
 };
 
-const deleteArticleById = async (articleId: string) => {
+const deleteArticleById = async (articleId: number) => {
   const articles = await articleRepository.deleteArticleById(articleId);
   return articles;
 };
@@ -26,6 +31,7 @@ const deleteArticleById = async (articleId: string) => {
 const services = {
   createArticle,
   getArticles,
+  getArticlesByTag,
   updateArticleById,
   deleteArticleById,
 };

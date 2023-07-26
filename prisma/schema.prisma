@@ -24,28 +24,28 @@ model User {
 }
 
 model Article {
-  id        String           @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  creator   User             @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  creatorId String
-  tags      TagsOnArticles[]
+  id          Int              @id @default(autoincrement())
+  title       String
+  subtitle    String
+  content     String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  creator     User             @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  creatorId   String
+  tags        TagsOnArticles[]
 }
 
 model Tag {
-  id       String           @id @default(uuid())
-  name     String           @unique
+  name     String           @id @unique
   articles TagsOnArticles[]
 }
 
 model TagsOnArticles {
   article    Article? @relation(fields: [articleId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  tag        Tag?     @relation(fields: [tagId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  articleId  String
-  tagId      String
+  tag        Tag?     @relation(fields: [tagName], references: [name], onUpdate: Cascade, onDelete: Cascade)
+  articleId  Int
+  tagName      String
   assignedAt DateTime @default(now())
 
-  @@id([articleId, tagId])
+  @@id([articleId, tagName])
 }

@@ -1,24 +1,28 @@
 import express, { Router } from "express";
-import { articleController } from "../controllers";
 import middlewares from "../middlewares";
+import { articleController } from "../controllers";
+import { createArticleSchema } from "../schemas";
+import { updateArticleSchema } from "../schemas";
 
 const router: Router = express.Router();
 
-router.post("/", middlewares.validateRequest, articleController.createArticle);
-router.get(
-  "/:creatorId?",
-  middlewares.validateRequest,
-  articleController.getArticles
+router.get("/:creatorId?", articleController.getArticles);
+router.get("/tag/:tag", articleController.getArticlesByTag);
+
+router.use(middlewares.validateSession);
+router.post(
+  "/",
+  middlewares.validateRequest(createArticleSchema),
+  articleController.createArticle
 );
 router.put(
   "/:articleId",
-  middlewares.validateRequest,
   middlewares.validateOwnership,
+  middlewares.validateRequest(updateArticleSchema),
   articleController.updateArticleById
 );
 router.delete(
   "/:articleId",
-  middlewares.validateRequest,
   middlewares.validateOwnership,
   articleController.deleteArticleById
 );

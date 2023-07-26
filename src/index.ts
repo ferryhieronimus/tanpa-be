@@ -7,12 +7,31 @@ import router from "./routes";
 import middlewares from "./middlewares";
 import redisStore from "./configs/redis";
 import swaggerUi from "swagger-ui-express";
-import * as swaggerDocument from "../swagger.json"
+import * as swaggerDocument from "../swagger.json";
+import cors from "cors";
+import slugify from "slugify";
 
 const app: Express = express();
 
 dotenv.config();
 
+const corsOptions = {
+  origin: "http://localhost:3001",
+  credentials: true,
+};
+
+app.get("/", (req, res) => {
+  res.send(
+    encodeURIComponent(
+      slugify(
+        "How Sylvia Plath's “The Fig Tree” Changed My Perspective on Life",
+        { lower: true, strict: true }
+      )
+    )
+  );
+});
+
+app.use(cors(corsOptions));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -23,6 +42,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: "alphalemon",
+    name: "session",
     cookie: {
       secure: false, // Set to true if using HTTPS
       httpOnly: true,

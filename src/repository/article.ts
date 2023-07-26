@@ -1,11 +1,12 @@
 import prisma from "../configs/prisma";
 
-const createArticle = async (data: createArticleParams, creatorId: string) => {
-  const { title, content, tags } = data;
+const createArticle = async (data: CreateArticleParams, creatorId: string) => {
+  const { title, subtitle, content, tags } = data;
 
   const createdArticle = await prisma.article.create({
     data: {
       title,
+      subtitle,
       content,
       creator: {
         connect: { id: creatorId },
@@ -23,6 +24,7 @@ const createArticle = async (data: createArticleParams, creatorId: string) => {
     },
     select: {
       title: true,
+      subtitle: true,
       content: true,
       tags: {
         select: {
@@ -58,6 +60,52 @@ const getArticles = async (creatorId: string) => {
     select: {
       id: true,
       title: true,
+      subtitle: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: {
+        select: {
+          username: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const articles = tmpArticles.map((article) => ({
+    ...article,
+    tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
+  }));
+
+  return articles;
+};
+
+const getArticlesByTag = async (tag: string) => {
+  const tmpArticles = await prisma.article.findMany({
+    where: {
+      tags: {
+        some: {
+          tag: {
+            name: { equals: tag, mode: "insensitive" },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      subtitle: true,
       content: true,
       createdAt: true,
       updatedAt: true,
@@ -89,27 +137,27 @@ const getArticles = async (creatorId: string) => {
 };
 
 const updateArticleById = async (
-  articleId: string,
-  data: updateArticleParams
+  articleId: number,
+  data: UpdateArticleParams
 ) => {
-  const { title, content, tags } = data;
+  const { title, content, tags, subtitle } = data;
 
   // delete many-to-many relation first, then add new
-  const tagId = await prisma.tagsOnArticles.findMany({
+  const tagName = await prisma.tagsOnArticles.findMany({
     where: {
-      tagId: { in: tags },
+      tagName: { in: tags },
       articleId,
     },
     select: {
-      tagId: true,
+      tagName: true,
     },
   });
 
-  const tagIdsArray = tagId.map((result) => result.tagId);
+  const tagNamesArray = tagName.map((result) => result.tagName);
 
   await prisma.tagsOnArticles.deleteMany({
     where: {
-      tagId: { notIn: tagIdsArray },
+      tagName: { notIn: tagNamesArray },
       articleId,
     },
   });
@@ -121,6 +169,7 @@ const updateArticleById = async (
     },
     data: {
       title,
+      subtitle,
       content,
       tags: {
         create: tags.map((tagName) => ({
@@ -171,7 +220,7 @@ const updateArticleById = async (
   return { ...updatedArticle, tags: arrayOfTags };
 };
 
-const deleteArticleById = async (articleId: string) => {
+const deleteArticleById = async (articleId: number) => {
   const deletedArticle = await prisma.article.delete({
     where: {
       id: articleId,
@@ -184,6 +233,7 @@ const deleteArticleById = async (articleId: string) => {
 const repository = {
   createArticle,
   getArticles,
+  getArticlesByTag,
   updateArticleById,
   deleteArticleById,
 };

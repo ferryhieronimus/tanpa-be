@@ -2,7 +2,7 @@ import { RequestHandler } from "express";
 import { articleService } from "../services";
 
 const createArticle: RequestHandler = async (req, res) => {
-  const data: createArticleParams = req.body;
+  const data: CreateArticleParams = req.body;
 
   const article = await articleService.createArticle(data, req.session.userId!);
 
@@ -29,12 +29,26 @@ const getArticles: RequestHandler = async (req, res) => {
   });
 };
 
+const getArticlesByTag: RequestHandler = async (req, res) => {
+  const { tag } = req.params;
+
+  const article = await articleService.getArticlesByTag(tag);
+
+  res.status(200).send({
+    status: "success",
+    message: "Article retrieved successfully",
+    data: {
+      articles: article,
+    },
+  });
+};
+
 const updateArticleById: RequestHandler = async (req, res) => {
   const { articleId } = req.params;
-  const data: updateArticleParams = req.body;
+  const data: UpdateArticleParams = req.body;
 
   const updatedArticle = await articleService.updateArticleById(
-    articleId,
+    parseInt(articleId),
     data
   );
 
@@ -50,7 +64,7 @@ const updateArticleById: RequestHandler = async (req, res) => {
 const deleteArticleById: RequestHandler = async (req, res) => {
   const { articleId } = req.params;
 
-  await articleService.deleteArticleById(articleId);
+  await articleService.deleteArticleById(parseInt(articleId));
 
   res.status(200).send({
     status: "success",
@@ -63,6 +77,7 @@ const controllers = {
   getArticles,
   deleteArticleById,
   updateArticleById,
+  getArticlesByTag
 };
 
 export default controllers;

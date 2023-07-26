@@ -5,11 +5,12 @@ import prisma from "../configs/prisma";
 // could possibly make it more general
 const validateOwnership: RequestHandler = async (req, _res, next) => {
   const { articleId } = req.params;
+  
   const creatorId = req.session.userId;
 
   const resource = await prisma.article.findUniqueOrThrow({
     where: {
-      id: articleId,
+      id: parseInt(articleId),
     },
     select: {
       creatorId: true,

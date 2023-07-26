@@ -16,7 +16,7 @@ const signIn = async (username: string, password: string) => {
   return user;
 };
 
-const signUp = async (data: createUserParams) => {
+const signUp = async (data: CreateUserParams) => {
   const { username, password, email, firstName, lastName } = data;
 
   const isUserAlreadyExist = await authRepository.findUser(username);
@@ -38,9 +38,15 @@ const signUp = async (data: createUserParams) => {
   return user;
 };
 
+const getCurrentUser = async (userId: string) => {
+  const user = await authRepository.findUserById(userId);
+  return user;
+};
+
 const services = {
   signIn,
   signUp,
+  getCurrentUser
 };
 
 export default services;
