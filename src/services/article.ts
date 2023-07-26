@@ -5,8 +5,18 @@ const createArticle = async (data: CreateArticleParams, creatorId: string) => {
   return createdArticle;
 };
 
-const getArticles = async (creatorId: string) => {
-  const articles = await articleRepository.getArticles(creatorId);
+const getArticles = async () => {
+  const articles = await articleRepository.getArticles();
+  return articles;
+};
+
+const getArticlesById = async (articleId: string) => {
+  const articles = await articleRepository.getArticlesById(parseInt(articleId));
+  return articles;
+};
+
+const getArticlesByUsername = async (username: string) => {
+  const articles = await articleRepository.getArticlesByUsername(username);
   return articles;
 };
 
@@ -31,6 +41,8 @@ const deleteArticleById = async (articleId: number) => {
 const services = {
   createArticle,
   getArticles,
+  getArticlesByUsername,
+  getArticlesById,
   getArticlesByTag,
   updateArticleById,
   deleteArticleById,

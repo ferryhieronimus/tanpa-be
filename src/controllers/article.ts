@@ -15,10 +15,36 @@ const createArticle: RequestHandler = async (req, res) => {
   });
 };
 
-const getArticles: RequestHandler = async (req, res) => {
-  const { creatorId } = req.params;
+const getArticles: RequestHandler = async (_req, res) => {
+  const article = await articleService.getArticles();
 
-  const article = await articleService.getArticles(creatorId);
+  res.status(200).send({
+    status: "success",
+    message: "Article retrieved successfully",
+    data: {
+      articles: article,
+    },
+  });
+};
+
+const getArticlesByUsername: RequestHandler = async (req, res) => {
+  const { username } = req.params;
+
+  const article = await articleService.getArticlesByUsername(username);
+
+  res.status(200).send({
+    status: "success",
+    message: "Article retrieved successfully",
+    data: {
+      articles: article,
+    },
+  });
+};
+
+const getArticlesById: RequestHandler = async (req, res) => {
+  const { articleId } = req.params;
+
+  const article = await articleService.getArticlesById(articleId);
 
   res.status(200).send({
     status: "success",
@@ -75,9 +101,11 @@ const deleteArticleById: RequestHandler = async (req, res) => {
 const controllers = {
   createArticle,
   getArticles,
+  getArticlesByUsername,
+  getArticlesByTag,
+  getArticlesById,
   deleteArticleById,
   updateArticleById,
-  getArticlesByTag
 };
 
 export default controllers;

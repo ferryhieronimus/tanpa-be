@@ -48,15 +48,91 @@ const createArticle = async (data: CreateArticleParams, creatorId: string) => {
   return { ...createdArticle, tags: arrayOfTags };
 };
 
-const getArticles = async (creatorId: string) => {
-  if (creatorId) {
-    await prisma.user.findUniqueOrThrow({
-      where: { id: creatorId },
-    });
-  }
+const getArticles = async () => {
+  const tmpArticles = await prisma.article.findMany({
+    select: {
+      id: true,
+      title: true,
+      subtitle: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: {
+        select: {
+          username: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const articles = tmpArticles.map((article) => ({
+    ...article,
+    tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
+  }));
+
+  return articles;
+};
+
+const getArticlesById = async (articleId: number) => {
+  const tmpArticles = await prisma.article.findMany({
+    where: { id: articleId },
+    select: {
+      id: true,
+      title: true,
+      subtitle: true,
+      content: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: {
+        select: {
+          username: true,
+        },
+      },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
+  // might affect performance
+  const articles = tmpArticles.map((article) => ({
+    ...article,
+    tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
+  }));
+
+  return articles;
+};
+
+const getArticlesByUsername = async (username: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      username_isDeleted: {
+        username,
+        isDeleted: false,
+      },
+    },
+  });
 
   const tmpArticles = await prisma.article.findMany({
-    where: creatorId ? { creatorId } : {},
+    where: { creatorId: user.id },
     select: {
       id: true,
       title: true,
@@ -233,6 +309,8 @@ const deleteArticleById = async (articleId: number) => {
 const repository = {
   createArticle,
   getArticles,
+  getArticlesById,
+  getArticlesByUsername,
   getArticlesByTag,
   updateArticleById,
   deleteArticleById,
