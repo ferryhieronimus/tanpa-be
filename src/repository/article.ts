@@ -1,13 +1,15 @@
 import prisma from "../configs/prisma";
+import slugify from "slugify";
 
 const createArticle = async (data: CreateArticleParams, creatorId: string) => {
-  const { title, subtitle, content, tags } = data;
+  const { title, subtitle, content, tags, coverImgURI } = data;
 
   const createdArticle = await prisma.article.create({
     data: {
       title,
       subtitle,
       content,
+      coverImgURI,
       creator: {
         connect: { id: creatorId },
       },
@@ -16,7 +18,10 @@ const createArticle = async (data: CreateArticleParams, creatorId: string) => {
           tag: {
             connectOrCreate: {
               where: { name: tagName },
-              create: { name: tagName },
+              create: {
+                name: tagName,
+                id: slugify(tagName, { lower: true, strict: true }),
+              },
             },
           },
         })),
@@ -26,6 +31,7 @@ const createArticle = async (data: CreateArticleParams, creatorId: string) => {
       title: true,
       subtitle: true,
       content: true,
+      coverImgURI: true,
       tags: {
         select: {
           tag: {
@@ -55,6 +61,7 @@ const getArticles = async () => {
       title: true,
       subtitle: true,
       content: true,
+      coverImgURI: true,
       createdAt: true,
       updatedAt: true,
       creator: {
@@ -92,6 +99,7 @@ const getArticlesById = async (articleId: number) => {
       title: true,
       subtitle: true,
       content: true,
+      coverImgURI: true,
       createdAt: true,
       updatedAt: true,
       creator: {
@@ -138,6 +146,7 @@ const getArticlesByUsername = async (username: string) => {
       title: true,
       subtitle: true,
       content: true,
+      coverImgURI: true,
       createdAt: true,
       updatedAt: true,
       creator: {
@@ -167,13 +176,15 @@ const getArticlesByUsername = async (username: string) => {
   return articles;
 };
 
-const getArticlesByTag = async (tag: string) => {
+const getArticlesByTag = async (tmpTag: string) => {
+  const tag = slugify(tmpTag, { strict: true });
+
   const tmpArticles = await prisma.article.findMany({
     where: {
       tags: {
         some: {
           tag: {
-            name: { equals: tag, mode: "insensitive" },
+            id: { equals: tag, mode: "insensitive" },
           },
         },
       },
@@ -183,6 +194,7 @@ const getArticlesByTag = async (tag: string) => {
       title: true,
       subtitle: true,
       content: true,
+      coverImgURI: true,
       createdAt: true,
       updatedAt: true,
       creator: {
@@ -216,24 +228,24 @@ const updateArticleById = async (
   articleId: number,
   data: UpdateArticleParams
 ) => {
-  const { title, content, tags, subtitle } = data;
+      const { title, content, tags, subtitle, coverImgURI } = data;
 
   // delete many-to-many relation first, then add new
-  const tagName = await prisma.tagsOnArticles.findMany({
-    where: {
-      tagName: { in: tags },
-      articleId,
-    },
-    select: {
-      tagName: true,
-    },
-  });
+  // const tagName = await prisma.tagsOnArticles.findMany({
+  //   where: {
+  //     tagName: { in: tags },
+  //     articleId,
+  //   },
+  //   select: {
+  //     tagName: true,
+  //   },
+  // });
 
-  const tagNamesArray = tagName.map((result) => result.tagName);
+  // const tagNamesArray = tagName.map((result) => result.tagName);
+  // console.log(tagNamesArray);
 
   await prisma.tagsOnArticles.deleteMany({
     where: {
-      tagName: { notIn: tagNamesArray },
       articleId,
     },
   });
@@ -247,12 +259,16 @@ const updateArticleById = async (
       title,
       subtitle,
       content,
+      coverImgURI,
       tags: {
         create: tags.map((tagName) => ({
           tag: {
             connectOrCreate: {
               where: { name: tagName },
-              create: { name: tagName },
+              create: {
+                name: tagName,
+                id: slugify(tagName, { lower: true, strict: true }),
+              },
             },
           },
         })),
@@ -262,6 +278,7 @@ const updateArticleById = async (
       id: true,
       title: true,
       content: true,
+      coverImgURI: true,
       createdAt: true,
       updatedAt: true,
       creator: {

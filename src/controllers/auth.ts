@@ -10,8 +10,7 @@ const signIn: RequestHandler = async (req, res) => {
 
   res.status(200).send({
     status: "success",
-    message: "Login success",
-    data: {},
+    message: "Login success"
   });
 };
 

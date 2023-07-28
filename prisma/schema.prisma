@@ -28,6 +28,7 @@ model Article {
   title       String
   subtitle    String
   content     String
+  coverImgURI String
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   creator     User             @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -36,16 +37,17 @@ model Article {
 }
 
 model Tag {
-  name     String           @id @unique
+  id       String           @id 
+  name     String        @unique
   articles TagsOnArticles[]
 }
 
 model TagsOnArticles {
   article    Article? @relation(fields: [articleId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  tag        Tag?     @relation(fields: [tagName], references: [name], onUpdate: Cascade, onDelete: Cascade)
+  tag        Tag?     @relation(fields: [tagId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   articleId  Int
-  tagName      String
+  tagId      String
   assignedAt DateTime @default(now())
 
-  @@id([articleId, tagName])
+  @@id([articleId, tagId])
 }
