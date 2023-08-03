@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import {
   InvalidCredentialsError,
+  ResourceNotFoundError,
   UserAlreadyExistError,
 } from "../utils/errors";
 import { authRepository } from "../repository";
@@ -38,7 +39,11 @@ const signUp = async (data: CreateUserParams) => {
   return user;
 };
 
-const getCurrentUser = async (userId: string) => {
+const getCurrentUser = async (userId?: string) => {
+  if (!userId) {
+    throw new ResourceNotFoundError("User not found");
+  }
+
   const user = await authRepository.findUserById(userId);
   return user;
 };
@@ -46,7 +51,7 @@ const getCurrentUser = async (userId: string) => {
 const services = {
   signIn,
   signUp,
-  getCurrentUser
+  getCurrentUser,
 };
 
 export default services;

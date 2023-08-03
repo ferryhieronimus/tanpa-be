@@ -54,8 +54,12 @@ const createArticle = async (data: CreateArticleParams, creatorId: string) => {
   return { ...createdArticle, tags: arrayOfTags };
 };
 
-const getArticles = async () => {
+const getArticles = async (cursor: GetArticlesQuery["cursor"]) => {
   const tmpArticles = await prisma.article.findMany({
+    take: 9,
+    skip: cursor === "0" ? undefined : 1,
+    cursor: cursor === "0" ? undefined : { id: parseInt(cursor!, 10) },
+    orderBy: { id: "desc" },
     select: {
       id: true,
       title: true,
@@ -88,11 +92,11 @@ const getArticles = async () => {
     tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
   }));
 
-  return articles;
+  return { articles, nextCursor: articles[articles.length - 1].id };
 };
 
-const getArticlesById = async (articleId: number) => {
-  const tmpArticles = await prisma.article.findMany({
+const getArticleById = async (articleId: number) => {
+  const tmpArticle = await prisma.article.findUniqueOrThrow({
     where: { id: articleId },
     select: {
       id: true,
@@ -121,10 +125,10 @@ const getArticlesById = async (articleId: number) => {
 
   // source: https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/working-with-many-to-many-relations#explicit-relations
   // might affect performance
-  const articles = tmpArticles.map((article) => ({
-    ...article,
-    tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
-  }));
+  const articles = {
+    ...tmpArticle,
+    tags: tmpArticle.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
+  };
 
   return articles;
 };
@@ -228,7 +232,7 @@ const updateArticleById = async (
   articleId: number,
   data: UpdateArticleParams
 ) => {
-      const { title, content, tags, subtitle, coverImgURI } = data;
+  const { title, content, tags, subtitle, coverImgURI } = data;
 
   // delete many-to-many relation first, then add new
   // const tagName = await prisma.tagsOnArticles.findMany({
@@ -326,7 +330,7 @@ const deleteArticleById = async (articleId: number) => {
 const repository = {
   createArticle,
   getArticles,
-  getArticlesById,
+  getArticleById,
   getArticlesByUsername,
   getArticlesByTag,
   updateArticleById,

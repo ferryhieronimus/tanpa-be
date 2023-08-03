@@ -3,15 +3,12 @@ import { authService } from "../services";
 
 const signIn: RequestHandler = async (req, res) => {
   const { username, password } = req.body;
-  
+
   const user = await authService.signIn(username, password);
 
   req.session.userId = user.id;
 
-  res.status(200).send({
-    status: "success",
-    message: "Login success"
-  });
+  res.status(200).send({ message: "Login success" });
 };
 
 const signUp: RequestHandler = async (req, res) => {
@@ -19,32 +16,36 @@ const signUp: RequestHandler = async (req, res) => {
 
   const createdUser = await authService.signUp(data);
 
-  res.status(200).send({
-    status: "success",
-    message: "Sign up success",
-    data: {
-      user: createdUser,
-    },
-  });
+  res.status(200).send({ user: createdUser });
+};
+
+const signOut: RequestHandler = async (req, res) => {
+  if (req.session) {
+    req.session.destroy((err) => {
+      if (err) {
+        res.status(500).send({ message: "Unable to log out" });
+      } else {
+        res.send({ message: "Logout successful" });
+      }
+    });
+  } else {
+    res.end();
+  }
 };
 
 const getCurrentUser: RequestHandler = async (req, res) => {
   const userId = req.session.userId;
 
-  const user = await authService.getCurrentUser(userId!);
+  const user = await authService.getCurrentUser(userId);
 
-  res.status(200).send({
-    status: "success",
-    data: {
-      user
-    },
-  });
+  res.status(200).send({ ...user });
 };
 
 const controllers = {
   signIn,
   signUp,
-  getCurrentUser
+  signOut,
+  getCurrentUser,
 };
 
 export default controllers;

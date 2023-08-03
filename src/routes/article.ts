@@ -9,7 +9,7 @@ const router: Router = express.Router();
 router.get("/", articleController.getArticles);
 router.get("/user/:username", articleController.getArticlesByUsername);
 router.get("/tag/:tag", articleController.getArticlesByTag);
-router.get("/:articleId/:slug?", articleController.getArticlesById);
+router.get("/:articleId", articleController.getArticleById);
 
 router.use(middlewares.validateSession);
 router.post(

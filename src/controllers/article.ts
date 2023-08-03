@@ -6,67 +6,39 @@ const createArticle: RequestHandler = async (req, res) => {
 
   const article = await articleService.createArticle(data, req.session.userId!);
 
-  res.status(201).send({
-    status: "success",
-    message: "Article created successfully",
-    data: {
-      article,
-    },
-  });
+  res.status(201).send({ ...article });
 };
 
-const getArticles: RequestHandler = async (_req, res) => {
-  const article = await articleService.getArticles();
+const getArticles: RequestHandler = async (req, res) => {
+  const { cursor } = req.query as GetArticlesQuery;
+  
+  const articles = await articleService.getArticles(cursor);
 
-  res.status(200).send({
-    status: "success",
-    message: "Article retrieved successfully",
-    data: {
-      articles: article,
-    },
-  });
+  res.status(200).send( articles );
 };
 
 const getArticlesByUsername: RequestHandler = async (req, res) => {
   const { username } = req.params;
 
-  const article = await articleService.getArticlesByUsername(username);
+  const articles = await articleService.getArticlesByUsername(username);
 
-  res.status(200).send({
-    status: "success",
-    message: "Article retrieved successfully",
-    data: {
-      articles: article,
-    },
-  });
+  res.status(200).send({ articles });
 };
 
-const getArticlesById: RequestHandler = async (req, res) => {
+const getArticleById: RequestHandler = async (req, res) => {
   const { articleId } = req.params;
 
-  const article = await articleService.getArticlesById(articleId);
+  const article = await articleService.getArticleById(articleId);
 
-  res.status(200).send({
-    status: "success",
-    message: "Article retrieved successfully",
-    data: {
-      articles: article,
-    },
-  });
+  res.status(200).send({ ...article });
 };
 
 const getArticlesByTag: RequestHandler = async (req, res) => {
   const { tag } = req.params;
 
-  const article = await articleService.getArticlesByTag(tag);
+  const articles = await articleService.getArticlesByTag(tag);
 
-  res.status(200).send({
-    status: "success",
-    message: "Article retrieved successfully",
-    data: {
-      articles: article,
-    },
-  });
+  res.status(200).send({ articles });
 };
 
 const updateArticleById: RequestHandler = async (req, res) => {
@@ -103,7 +75,7 @@ const controllers = {
   getArticles,
   getArticlesByUsername,
   getArticlesByTag,
-  getArticlesById,
+  getArticleById,
   deleteArticleById,
   updateArticleById,
 };

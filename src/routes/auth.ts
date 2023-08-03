@@ -11,6 +11,7 @@ router.post(
   middlewares.validateRequest(createUserSchema),
   authController.signUp
 );
+router.post("/signout", authController.signOut);
 
 // router.use(middlewares.validateSession);
 router.get("/self", authController.getCurrentUser);

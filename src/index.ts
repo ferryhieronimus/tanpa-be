@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
   res.send(
     encodeURIComponent(
       slugify(
-        "How Sylvia Plath's “The Fig Tree” Changed My Perspective on Life",
+        "I love you ",
         { lower: true, strict: true }
       )
     )
