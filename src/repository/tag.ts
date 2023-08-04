@@ -10,8 +10,15 @@ const getTagById = async (id: string) => {
   return tag;
 };
 
+const getTags = async () => {
+  const tags = await prisma.tag.findMany({});
+
+  return tags;
+};
+
 const repository = {
   getTagById,
+  getTags,
 };
 
 export default repository;

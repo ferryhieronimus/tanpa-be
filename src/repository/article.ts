@@ -109,6 +109,8 @@ const getArticleById = async (articleId: number) => {
       creator: {
         select: {
           username: true,
+          firstName: true,
+          lastName: true
         },
       },
       tags: {
