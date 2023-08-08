@@ -6,7 +6,6 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
 
   if (err instanceof ZodError) {
     return res.status(400).json({
-      status: "error",
       message: err.issues,
     });
   }
@@ -15,7 +14,6 @@ const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   const message = err.message || "Internal Server Error";
 
   return res.status(statusCode).json({
-    status: "error",
     message: message,
   });
 };

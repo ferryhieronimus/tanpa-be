@@ -9,7 +9,6 @@ import redisStore from "./configs/redis";
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "../swagger.json";
 import cors from "cors";
-import slugify from "slugify";
 
 const app: Express = express();
 
@@ -19,17 +18,6 @@ const corsOptions = {
   origin: "http://localhost:3001",
   credentials: true,
 };
-
-app.get("/", (req, res) => {
-  res.send(
-    encodeURIComponent(
-      slugify(
-        "I love you ",
-        { lower: true, strict: true }
-      )
-    )
-  );
-});
 
 app.use(cors(corsOptions));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -46,7 +34,7 @@ app.use(
     cookie: {
       secure: false, // Set to true if using HTTPS
       httpOnly: true,
-      maxAge: 1000 * 60 * 30, // 30 minutes
+      maxAge: parseInt(process.env.COOKIES_MAX_AGE!),
     },
   })
 );

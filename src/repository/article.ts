@@ -3,7 +3,6 @@ import slugify from "slugify";
 
 const createArticle = async (data: CreateArticleParams, creatorId: string) => {
   const { title, subtitle, content, tags, coverImgURI } = data;
-console.log(data);
 
   const createdArticle = await prisma.article.create({
     data: {

@@ -65,7 +65,6 @@ const deleteArticleById: RequestHandler = async (req, res) => {
   await articleService.deleteArticleById(parseInt(articleId));
 
   res.status(200).send({
-    status: "success",
     message: "Article deleted successfully",
   });
 };
