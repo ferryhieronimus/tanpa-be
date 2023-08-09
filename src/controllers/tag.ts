@@ -15,9 +15,18 @@ const getTags: RequestHandler = async (req, res) => {
   res.status(200).send(tags);
 };
 
+const createTag: RequestHandler = async (req, res) => {
+  const data: CreateTagParams = req.body;
+
+  const article = await tagService.createTag(data);
+
+  res.status(201).send({ ...article });
+};
+
 const controllers = {
   getTags,
   getTagById,
+  createTag
 };
 
 export default controllers;

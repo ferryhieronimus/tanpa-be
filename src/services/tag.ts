@@ -11,9 +11,15 @@ const getTags = async () => {
   return tags;
 };
 
+const createTag = async (data: CreateTagParams) => {
+  const createdArticle = await tagRepository.createTag(data);
+  return createdArticle;
+};
+
 const services = {
   getTagById,
   getTags,
+  createTag
 };
 
 export default services;
