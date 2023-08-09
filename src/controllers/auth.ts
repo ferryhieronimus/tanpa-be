@@ -16,6 +16,8 @@ const signUp: RequestHandler = async (req, res) => {
 
   const createdUser = await authService.signUp(data);
 
+  req.session.userId = createdUser.id;
+
   res.status(200).send({ user: createdUser });
 };
 
@@ -41,11 +43,21 @@ const getCurrentUser: RequestHandler = async (req, res) => {
   res.status(200).send({ ...user });
 };
 
+const updateCurrentUser: RequestHandler = async (req, res) => {
+  const userId = req.session.userId;
+  const data: UpdateUserParams = req.body;
+
+  const user = await authService.updateCurrentUser(data, userId);
+
+  res.status(200).send({ ...user });
+};
+
 const controllers = {
   signIn,
   signUp,
   signOut,
   getCurrentUser,
+  updateCurrentUser
 };
 
 export default controllers;

@@ -18,7 +18,7 @@ const signIn = async (username: string, password: string) => {
 };
 
 const signUp = async (data: CreateUserParams) => {
-  const { username, password, email, firstName, lastName } = data;
+  const { username, password, email, firstName, lastName, bio } = data;
 
   const isUserAlreadyExist = await authRepository.findUser(username);
 
@@ -28,13 +28,10 @@ const signUp = async (data: CreateUserParams) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const user = await authRepository.createUser(
-    username,
-    passwordHash,
-    email,
-    firstName,
-    lastName
-  );
+  const user = await authRepository.createUser({
+    ...data,
+    password: passwordHash,
+  });
 
   return user;
 };
@@ -48,10 +45,20 @@ const getCurrentUser = async (userId?: string) => {
   return user;
 };
 
+const updateCurrentUser = async (data: UpdateUserParams, userId?: string) => {
+  if (!userId) {
+    throw new ResourceNotFoundError("User not found");
+  }
+
+  const user = await authRepository.updateUserById(userId, data);
+  return user;
+};
+
 const services = {
   signIn,
   signUp,
   getCurrentUser,
+  updateCurrentUser,
 };
 
 export default services;

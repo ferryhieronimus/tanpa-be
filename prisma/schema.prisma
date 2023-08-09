@@ -8,17 +8,18 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  username  String
-  email     String
-  password  String
-  firstName String
-  lastName  String?
-  isDeleted Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  Articles  Article[]
+  id          String    @id @default(uuid())
+  username    String
+  email       String
+  password    String
+  firstName   String?
+  lastName    String?
+  bio         String?
+  isDeleted   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  Articles    Article[]
 
   @@unique([username, isDeleted])
 }
@@ -37,8 +38,8 @@ model Article {
 }
 
 model Tag {
-  id       String           @id 
-  name     String        @unique
+  id       String           @id
+  name     String           @unique
   articles TagsOnArticles[]
 }
 

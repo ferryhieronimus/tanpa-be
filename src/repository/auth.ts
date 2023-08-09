@@ -1,15 +1,16 @@
 import prisma from "../configs/prisma";
 
-const createUser = async (
-  username: string,
-  password: string,
-  email: string,
-  firstName: string,
-  lastName?: string
-) => {
+const createUser = async (data: CreateUserParams) => {
   const user = await prisma.user.create({
-    data: { username, password, email, firstName, lastName },
-    select: { username: true, email: true, firstName: true, lastName: true },
+    data,
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      bio: true,
+    },
   });
 
   return user;
@@ -46,11 +47,30 @@ const findUserById = async (userId: string) => {
   return user;
 };
 
+const updateUserById = async (userId: string, data: UpdateUserParams) => {
+  const user = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data,
+    select: {
+      username: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      bio: true,
+    },
+  });
+
+  return user;
+};
+
 const repository = {
   createUser,
   findUser,
   findUserOrThrow,
   findUserById,
+  updateUserById,
 };
 
 export default repository;

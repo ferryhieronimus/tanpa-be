@@ -13,7 +13,9 @@ router.post(
 );
 router.post("/signout", authController.signOut);
 
-// router.use(middlewares.validateSession);
 router.get("/self", authController.getCurrentUser);
+
+router.use(middlewares.validateSession);
+router.put("/self", authController.updateCurrentUser);
 
 export default router;
