@@ -92,7 +92,11 @@ const getArticles = async (cursor: GetArticlesQuery["cursor"]) => {
     tags: article.tags.map((tag) => (tag.tag ? tag.tag.name : null)),
   }));
 
-  return { articles, nextCursor: articles[articles.length - 1].id };
+  if (tmpArticles.length !== 0) {
+    return { articles, nextCursor: articles[articles.length - 1].id };
+  }
+
+  return { articles, nextCursor: undefined };
 };
 
 const getArticleById = async (articleId: number) => {
@@ -110,7 +114,7 @@ const getArticleById = async (articleId: number) => {
         select: {
           username: true,
           firstName: true,
-          lastName: true
+          lastName: true,
         },
       },
       tags: {
