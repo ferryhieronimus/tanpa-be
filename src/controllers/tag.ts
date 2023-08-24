@@ -9,7 +9,7 @@ const getTagById: RequestHandler = async (req, res) => {
   res.status(200).send({ ...returned_tag });
 };
 
-const getTags: RequestHandler = async (req, res) => {
+const getTags: RequestHandler = async (_req, res) => {
   const tags = await tagService.getTags();
 
   res.status(200).send(tags);
