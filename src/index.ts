@@ -14,12 +14,16 @@ const app: Express = express();
 
 dotenv.config();
 
-const corsOptions = {
-  origin: "http://localhost:3001",
-  credentials: true,
-};
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+]
 
-app.use(cors(corsOptions));
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+}
+
+app.use(cors(options));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -32,7 +36,7 @@ app.use(
     secret: "alphalemon",
     name: "session",
     cookie: {
-      secure: false, // Set to true if using HTTPS
+      secure: true, // Set to true if using HTTPS
       httpOnly: true,
       maxAge: parseInt(process.env.COOKIES_MAX_AGE!),
     },
@@ -47,7 +51,7 @@ const port = process.env.PORT || 3000;
 
 const start = async () => {
   app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+    console.log(`[server]: Server is running at ${port}`);
   });
 };
 
