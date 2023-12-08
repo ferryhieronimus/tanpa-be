@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   db:
-    image: postgres:latest
+    image: postgres:15
     container_name: db_postgres_ic4
     ports:
       - "5433:5432"

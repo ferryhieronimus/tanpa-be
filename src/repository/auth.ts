@@ -37,7 +37,7 @@ const findUserOrThrow = async (username: string) => {
 };
 
 const findUserById = async (userId: string) => {
-  const user = await prisma.user.findUniqueOrThrow({
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },

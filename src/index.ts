@@ -20,7 +20,8 @@ const allowedOrigins = [
 ]
 
 const options: cors.CorsOptions = {
-  origin: allowedOrigins
+  origin: allowedOrigins,
+  credentials: true,
 }
 
 app.use(cors(options));
@@ -47,7 +48,7 @@ app.use("/api/v1", router);
 app.use(middlewares.unknownEndpoint);
 app.use(middlewares.errorHandler);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 const start = async () => {
   app.listen(port, () => {

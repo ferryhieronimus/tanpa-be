@@ -38,7 +38,7 @@ const signUp = async (data: CreateUserParams) => {
 
 const getCurrentUser = async (userId?: string) => {
   if (!userId) {
-    throw new ResourceNotFoundError("User not found");
+    return null;
   }
 
   const user = await authRepository.findUserById(userId);

@@ -40,7 +40,10 @@ const getCurrentUser: RequestHandler = async (req, res) => {
 
   const user = await authService.getCurrentUser(userId);
 
-  res.status(200).send({ ...user });
+  if (!user) {
+    return res.status(200).json(null);
+  }
+  return res.status(200).send({ ...user });
 };
 
 const updateCurrentUser: RequestHandler = async (req, res) => {
